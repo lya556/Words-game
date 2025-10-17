@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لعبة ترتيب الكلمة</title>
+<style>
+  body {
+    font-family: "Cairo", sans-serif;
+    background: linear-gradient(135deg, #1a237e, #0d47a1);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  }
+
+  input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    width: 200px;
+    text-align: center;
+  }
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    margin: 10px;
+    cursor: pointer;
+    background-color: #64b5f6;
+    font-size: 16px;
+  }
+
+  .letters {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .circle {
+    background: #42a5f5;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .circle:hover {
+    background: #90caf9;
+  }
+
+  .answer {
+    margin-top: 20px;
+    min-height: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .slot {
+    width: 40px;
+    height: 40px;
+    border-bottom: 2px solid white;
+    text-align: center;
+    font-size: 22px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🎯 لعبة ترتيب الكلمة</h2>
+  <input id="wordInput" type="text" placeholder="ادخل كلمة">
+  <button id="enterBtn">إدخال</button>
+
+  <div class="letters"></div>
+
+  <div class="answer"></div>
+
+  <button id="checkBtn">تحقق</button>
+</div>
+
+<script>
+  const input = document.getElementById("wordInput");
+  const enterBtn = document.getElementById("enterBtn");
+  const lettersDiv = document.querySelector(".letters");
+  const answerDiv = document.querySelector(".answer");
+  const checkBtn = document.getElementById("checkBtn");
+  let originalWord = "";
+
+  enterBtn.onclick = () => {
+    const word = input.value.trim();
+    if (!word) return alert("أدخل كلمة أولاً!");
+    originalWord = word;
+    lettersDiv.innerHTML = "";
+    answerDiv.innerHTML = "";
+
+    const shuffled = word.split("").sort(() => Math.random() - 0.5);
+
+    shuffled.forEach((letter) => {
+      const circle = document.createElement("div");
+      circle.className = "circle";
+      circle.textContent = letter;
+      circle.onclick = () => selectLetter(circle);
+      lettersDiv.appendChild(circle);
+    });
+
+    for (let i = 0; i < word.length; i++) {
+      const slot = document.createElement("div");
+      slot.className = "slot";
+      slot.onclick = () => removeLetter(slot);
+      answerDiv.appendChild(slot);
+    }
+  };
+
+  function selectLetter(circle) {
+    const emptySlot = [...answerDiv.children].find(s => s.textContent === "");
+    if (!emptySlot) return;
+    emptySlot.textContent = circle.textContent;
+    circle.style.visibility = "hidden";
+  }
+
+  function removeLetter(slot) {
+    if (slot.textContent) {
+      const hiddenCircle = [...lettersDiv.children].find(c => c.textContent === slot.textContent && c.style.visibility === "hidden");
+      if (hiddenCircle) hiddenCircle.style.visibility = "visible";
+      slot.textContent = "";
+    }
+  }
+
+  checkBtn.onclick = () => {
+    const formedWord = [...answerDiv.children].map(s => s.textContent).join("");
+    if (formedWord === originalWord) {
+      alert("✅ صحيح! أحسنت 🎉");
+    } else {
+      alert("❌ حاول مرة أخرى!");
+    }
+  };
+</script>
+
+</body>
+</html>
+  
